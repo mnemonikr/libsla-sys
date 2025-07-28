@@ -355,7 +355,7 @@ mod default {
 
         #[rust_name = "parse_processor_config"]
         fn parseProcessorConfig(self: Pin<&mut SleighProxy>, store: &DocumentStorage)
-            -> Result<()>;
+        -> Result<()>;
 
         // TODO Can throw UnimplError from C++ which has lots of useful info that is lost here
         #[rust_name = "disassemble_pcode"]
