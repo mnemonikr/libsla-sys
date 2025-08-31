@@ -155,6 +155,26 @@ std::unique_ptr<std::vector<RegisterVarnodeName>> SleighProxy::getAllRegistersPr
     return reglist;
 }
 
+void SleighProxy::initializeFromSla(const std::string &sla) {
+    std::stringstream slaStream(sla);
+
+    // This is based on the code in Sleigh::initialize
+    if (!isInitialized()) {
+        sla::FormatDecode decoder(this);
+        decoder.ingestStream(slaStream);
+        decode(decoder);
+    }
+
+  if (isInitialized()) {
+      // Dummy store, will not be accessed if initialized.
+      // Still need to call Sleigh::initialize to finish initialization
+      DocumentStorage store;
+      initialize(store);
+  } else {
+      throw LowlevelError("Failed to initialize sleigh");
+  }
+}
+
 int4 SleighProxy::disassemblePcode(const RustLoadImage &loadImage, RustPcodeEmit &emit, const Address &baseaddr) const {
     // The loader is stored in the loader proxy only for as long as this manager lives
     RustLoadImageManager manager { *loader.get(), loadImage };

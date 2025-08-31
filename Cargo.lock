@@ -146,7 +146,7 @@ dependencies = [
 
 [[package]]
 name = "libsla-sys"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "cxx",
  "cxx-build",
