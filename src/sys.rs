@@ -315,6 +315,8 @@ mod default {
         #[rust_name = "new_sleigh"]
         fn construct_new_sleigh(context: UniquePtr<ContextDatabase>) -> UniquePtr<SleighProxy>;
         fn initialize(self: Pin<&mut SleighProxy>, store: Pin<&mut DocumentStorage>) -> Result<()>;
+        #[rust_name = "initialize_from_sla"]
+        fn initializeFromSla(self: Pin<&mut SleighProxy>, sla: &CxxString) -> Result<()>;
         #[rust_name = "num_spaces"]
         fn numSpaces(self: &SleighProxy) -> i32;
         #[rust_name = "address_space"]

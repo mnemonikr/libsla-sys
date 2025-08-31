@@ -77,6 +77,7 @@ class SleighProxy : public Sleigh {
         int4 disassembleNative(const RustLoadImage &loadImage, RustAssemblyEmit &emit, const Address &baseaddr) const;
         std::unique_ptr<std::string> getRegisterNameProxy(AddrSpace *base, uintb off, int4 size) const;
         unique_ptr<vector<RegisterVarnodeName>> getAllRegistersProxy() const;
+        void initializeFromSla(const std::string &sla);
 };
 
 unique_ptr<SleighProxy> construct_new_sleigh(unique_ptr<ContextDatabase> context);
