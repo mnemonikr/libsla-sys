@@ -165,14 +165,34 @@ void SleighProxy::initializeFromSla(const std::string &sla) {
         decode(decoder);
     }
 
-  if (isInitialized()) {
-      // Dummy store, will not be accessed if initialized.
-      // Still need to call Sleigh::initialize to finish initialization
-      DocumentStorage store;
-      initialize(store);
-  } else {
-      throw LowlevelError("Failed to initialize sleigh");
-  }
+    if (isInitialized()) {
+        // Dummy store, will not be accessed if initialized.
+        // Still need to call Sleigh::initialize to finish initialization
+        DocumentStorage store;
+        initialize(store);
+    } else {
+        throw LowlevelError("Failed to initialize sleigh");
+    }
+}
+
+void SleighProxy::initializeFromRawSla(const std::string &sla) {
+    std::stringstream slaStream(sla);
+
+    // This is based on the code in Sleigh::initialize
+    if (!isInitialized()) {
+        RawFormatDecode decoder(this);
+        decoder.ingestStream(slaStream);
+        decode(decoder);
+    }
+
+    if (isInitialized()) {
+        // Dummy store, will not be accessed if initialized.
+        // Still need to call Sleigh::initialize to finish initialization
+        DocumentStorage store;
+        initialize(store);
+    } else {
+        throw LowlevelError("Failed to initialize sleigh");
+    }
 }
 
 int4 SleighProxy::disassemblePcode(const RustLoadImage &loadImage, RustPcodeEmit &emit, const Address &baseaddr) const {
@@ -198,4 +218,41 @@ RustLoadImageManager::RustLoadImageManager(RustLoadImageProxy &proxy, const Rust
 
 RustLoadImageManager::~RustLoadImageManager() {
     this->proxy.resetInner();
+}
+
+const int4 RawFormatDecode::IN_BUFFER_SIZE = 4096;
+
+RawFormatDecode::RawFormatDecode(const AddrSpaceManager *spcManager)
+  : PackedDecode(spcManager)
+{
+    inBuffer = new uint1[IN_BUFFER_SIZE];
+}
+
+RawFormatDecode::~RawFormatDecode(void) {
+    delete[] inBuffer;
+}
+
+
+void RawFormatDecode::ingestStream(istream &s) {
+    uint1 *outBuf;
+    int4 outAvail = 0;
+    while (true) {
+        s.read((char *)inBuffer,IN_BUFFER_SIZE);
+        int4 gcount = s.gcount();
+        if (gcount == 0)
+            break;
+        int4 inAvail = gcount;
+        do {
+            if (outAvail == 0) {
+                outBuf = allocateNextInputBuffer(0);
+                outAvail = BUFFER_SIZE;
+            }
+            int4 copySize = std::min(outAvail, inAvail);
+            memcpy(outBuf + (BUFFER_SIZE - outAvail), inBuffer + (gcount - inAvail), copySize);
+            outAvail -= copySize;
+            inAvail -= copySize;
+        } while(outAvail == 0);
+    }
+
+    endIngest(BUFFER_SIZE - outAvail);
 }

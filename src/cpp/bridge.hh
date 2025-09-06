@@ -65,6 +65,15 @@ class RegisterVarnodeName {
         const std::string& getName() const;
 };
 
+class RawFormatDecode : public PackedDecode {
+  static const int4 IN_BUFFER_SIZE;
+  uint1 *inBuffer;
+public:
+  RawFormatDecode(const AddrSpaceManager *spcManager);
+  virtual ~RawFormatDecode();
+  virtual void ingestStream(istream &s);
+};
+
 class SleighProxy : public Sleigh {
     unique_ptr<RustLoadImageProxy> loader;
     unique_ptr<ContextDatabase> context;
@@ -77,6 +86,7 @@ class SleighProxy : public Sleigh {
         std::unique_ptr<std::string> getRegisterNameProxy(AddrSpace *base, uintb off, int4 size) const;
         unique_ptr<vector<RegisterVarnodeName>> getAllRegistersProxy() const;
         void initializeFromSla(const std::string &sla);
+        void initializeFromRawSla(const std::string &sla);
 };
 
 unique_ptr<SleighProxy> construct_new_sleigh(unique_ptr<ContextDatabase> context);

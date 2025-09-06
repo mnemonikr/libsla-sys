@@ -1,6 +1,6 @@
 [package]
 name = "libsla-sys"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2024"
 description = "System crate for Ghidra Sleigh library libsla"
 categories = ["security", "external-ffi-bindings"]
