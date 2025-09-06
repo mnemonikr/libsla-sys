@@ -222,7 +222,6 @@ RustLoadImageManager::~RustLoadImageManager() {
 
 const int4 RawFormatDecode::IN_BUFFER_SIZE = 4096;
 
-/// \param spcManager is the (uninitialized) manager that will hold decoded address spaces
 RawFormatDecode::RawFormatDecode(const AddrSpaceManager *spcManager)
   : PackedDecode(spcManager)
 {
