@@ -1,7 +1,5 @@
 #pragma once
 
-using namespace std;
-
 #include <memory>
 
 #include "error_handling.hh"
@@ -11,6 +9,7 @@ using namespace std;
 #include "translate.hh"
 #include "marshal.hh"
 
+using namespace std;
 using namespace ghidra;
 
 class RustAssemblyEmit;
