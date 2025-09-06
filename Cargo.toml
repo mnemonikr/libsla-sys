@@ -20,6 +20,17 @@ include = [
     "/ghidra/licenses/*",
 ]
 
+[features]
+
+# Must be defined as the RUSTC_LINKER
+clang = []
+
+# Must build with rustc nightly flag -Z sanitizer=address
+asan = ["clang"]
+ubsan = ["clang"]
+sancov = ["clang"]
+fuzzing = ["asan", "ubsan", "sancov"]
+
 [dependencies]
 cxx = "1.0"
 

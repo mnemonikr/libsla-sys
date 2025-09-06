@@ -51,10 +51,34 @@ fn main() {
         "zutil.c",
     ];
 
-    cxx_build::bridge("src/sys.rs")
+    let mut build = cxx_build::bridge("src/sys.rs");
+
+    if std::env::var("CARGO_FEATURE_CLANG").is_ok() {
+        build.compiler(std::env::var("RUSTC_LINKER").expect("clang should be the rustc linker"));
+    }
+
+    build
         .define("LOCAL_ZLIB", "1")
         .define("NO_GZIP", "1")
-        .flag_if_supported("-std=c++14")
+        .flag_if_supported("-std=c++14");
+
+    if std::env::var("CARGO_FEATURE_SANCOV").is_ok() {
+        build.flag("-fsanitize-coverage=inline-8bit-counters");
+    }
+
+    if std::env::var("CARGO_FEATURE_ASAN").is_ok() {
+        build.flag("-fsanitize=address");
+    }
+
+    if std::env::var("CARGO_FEATURE_UBSAN").is_ok() {
+        build.flag("-fsanitize=undefined");
+    }
+
+    if std::env::var("CARGO_FEATURE_FUZZING").is_ok() {
+        build.flag("-fno-omit-frame-pointer");
+    }
+
+    build
         .files(LIBSLA_SOURCE_FILES.iter().map(|s| source_path.join(s)))
         .files(ZLIB_SOURCE_FILES.iter().map(|s| zlib_path.join(s)))
         .file("src/cpp/bridge.cc")
@@ -67,4 +91,7 @@ fn main() {
 
     // Rerun if any of the C++ bridge code has changed
     println!("cargo:rerun-if-changed=src/cpp");
+
+    // Rerun if any Ghidra code has changed (for testing)
+    println!("cargo:rerun-if-changed=ghidra/Ghidra/Features/Decompiler/src/decompile/cpp");
 }
