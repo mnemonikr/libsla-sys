@@ -29,7 +29,7 @@ clang = []
 asan = ["clang"]
 ubsan = ["clang"]
 sancov = ["clang"]
-fuzzing = ["asan", "ubsan", "sancov"]
+fuzzing = ["asan", "sancov"]
 
 [dependencies]
 cxx = "1.0"
