@@ -99,7 +99,7 @@ T construct(Args... args) {
 
 template<typename T, typename... Args>
 unique_ptr<T> construct_new(Args... args) {
-    return make_unique<T>(args...);
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 
 void initialize_element_id();
