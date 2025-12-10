@@ -66,12 +66,12 @@ SleighProxy::SleighProxy(unique_ptr<RustLoadImageProxy> loader, unique_ptr<Conte
 }
 
 unique_ptr<SleighProxy> construct_new_sleigh(unique_ptr<ContextDatabase> context) {
-    auto loader = make_unique<RustLoadImageProxy>();
-    return make_unique<SleighProxy>(move(loader), move(context));
+    auto loader = std::unique_ptr<RustLoadImageProxy>(new RustLoadImageProxy());
+    return std::unique_ptr<SleighProxy>(new SleighProxy(move(loader), move(context)));
 }
 
 unique_ptr<ContextDatabase> construct_new_context() {
-    return make_unique<ContextInternal>();
+    return std::unique_ptr<ContextDatabase>(new ContextInternal());
 }
 
 RustPcodeEmitProxy::RustPcodeEmitProxy(RustPcodeEmit &emit)
@@ -87,7 +87,7 @@ void initialize_attribute_id() {
 }
 
 unique_ptr<Address> getAddress(const VarnodeData &data) {
-    return make_unique<Address>(data.space, data.offset);
+    return std::unique_ptr<Address>(new Address(data.space, data.offset));
 }
 
 uint4 getSize(const VarnodeData &data) {
@@ -139,7 +139,7 @@ void SleighProxy::parseProcessorConfig(const DocumentStorage &store) {
 }
 
 std::unique_ptr<std::string> SleighProxy::getRegisterNameProxy(AddrSpace *base, uintb off, int4 size) const {
-    return std::make_unique<std::string>(getRegisterName(base, off, size));
+    return std::unique_ptr<std::string>(new std::string(getRegisterName(base, off, size)));
 }
 
 
@@ -147,7 +147,7 @@ std::unique_ptr<std::vector<RegisterVarnodeName>> SleighProxy::getAllRegistersPr
     std::map<VarnodeData, std::string> regmap;
     getAllRegisters(regmap);
 
-    auto reglist = std::make_unique<std::vector<RegisterVarnodeName>>();
+    auto reglist = std::unique_ptr<std::vector<RegisterVarnodeName>>(new std::vector<RegisterVarnodeName>());
     for (auto &regmapEntry : regmap) {
         reglist->push_back(RegisterVarnodeName(regmapEntry));
     }

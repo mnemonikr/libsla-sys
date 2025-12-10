@@ -60,7 +60,7 @@ fn main() {
     build
         .define("LOCAL_ZLIB", "1")
         .define("NO_GZIP", "1")
-        .flag_if_supported("-std=c++14");
+        .flag_if_supported("-std=c++11");
 
     if std::env::var("CARGO_FEATURE_SANCOV").is_ok() {
         build.flag("-fsanitize-coverage=inline-8bit-counters");
