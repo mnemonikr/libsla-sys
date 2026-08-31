@@ -155,6 +155,15 @@ std::unique_ptr<std::vector<RegisterVarnodeName>> SleighProxy::getAllRegistersPr
     return reglist;
 }
 
+/// The names of the language's user-defined p-code operations, indexed by the
+/// identifier a CALLOTHER carries. `SleighBase` already keeps this list; without
+/// an accessor a caller sees only the index, which names nothing on its own.
+std::unique_ptr<std::vector<std::string>> SleighProxy::getUserOpNamesProxy() const {
+    auto names = std::unique_ptr<std::vector<std::string>>(new std::vector<std::string>());
+    getUserOpNames(*names);
+    return names;
+}
+
 void SleighProxy::initializeFromSla(const std::string &sla) {
     std::stringstream slaStream(sla);
 
