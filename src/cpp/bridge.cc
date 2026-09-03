@@ -155,6 +155,17 @@ std::unique_ptr<std::vector<RegisterVarnodeName>> SleighProxy::getAllRegistersPr
     return reglist;
 }
 
+/// Discard every parser context cached by instruction address while retaining
+/// the decoded Sleigh specification. Ghidra's public reset path rebuilds the
+/// context and disassembly caches without decoding the specification again.
+void SleighProxy::clearCache(const DocumentStorage &processorSpec) {
+    context = construct_new_context();
+    reset(loader.get(), context.get());
+    DocumentStorage store;
+    initialize(store);
+    parseProcessorConfig(processorSpec);
+}
+
 void SleighProxy::initializeFromSla(const std::string &sla) {
     std::stringstream slaStream(sla);
 
